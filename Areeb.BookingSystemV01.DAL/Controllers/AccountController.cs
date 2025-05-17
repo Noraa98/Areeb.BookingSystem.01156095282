@@ -60,27 +60,31 @@ namespace Areeb.BookingSystemV01.PL.Controllers
 
             var user = new User
             {
-                
+                UserName = model.Username,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                EmailConfirmed = true
+                
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "User");
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
 
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError("", error.Description);
             }
 
             return View(model);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Logout()

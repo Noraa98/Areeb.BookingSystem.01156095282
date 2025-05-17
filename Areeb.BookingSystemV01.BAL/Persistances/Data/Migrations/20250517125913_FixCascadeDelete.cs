@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
 {
     /// <inheritdoc />
@@ -39,6 +41,79 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 name: "IX_Users_RoleId",
                 table: "AspNetUsers",
                 newName: "IX_AspNetUsers_RoleId");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Location",
+                table: "Events",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(200)",
+                oldMaxLength: 200);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "EventName",
+                table: "Events",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(100)",
+                oldMaxLength: 100);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "TicketQuantity",
+                table: "Bookings",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldDefaultValue: 1);
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "BookingDate",
+                table: "Bookings",
+                type: "datetime2",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2",
+                oldDefaultValueSql: "GETDATE()");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Password",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(200)",
+                oldMaxLength: 200);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Email",
+                table: "AspNetUsers",
+                type: "nvarchar(256)",
+                maxLength: 256,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(100)",
+                oldMaxLength: 100);
 
             migrationBuilder.AddColumn<int>(
                 name: "AccessFailedCount",
@@ -106,6 +181,12 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 nullable: false,
                 defaultValue: false);
 
+            migrationBuilder.AddColumn<int>(
+                name: "RoleId1",
+                table: "AspNetUsers",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "SecurityStamp",
                 table: "AspNetUsers",
@@ -125,6 +206,26 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 type: "nvarchar(256)",
                 maxLength: 256,
                 nullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "AspNetRoles",
+                type: "nvarchar(256)",
+                maxLength: 256,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(50)",
+                oldMaxLength: 50);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Description",
+                table: "AspNetRoles",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(200)",
+                oldMaxLength: 200,
+                oldNullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "ConcurrencyStamp",
@@ -255,10 +356,24 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { 1, null, "Administrator role with full access", "Admin", "ADMIN" },
+                    { 2, null, "Regular user role", "User", "USER" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_RoleId1",
+                table: "AspNetUsers",
+                column: "RoleId1");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -299,8 +414,14 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 table: "AspNetUsers",
                 column: "RoleId",
                 principalTable: "AspNetRoles",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUsers_AspNetRoles_RoleId1",
+                table: "AspNetUsers",
+                column: "RoleId1",
+                principalTable: "AspNetRoles",
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Bookings_AspNetUsers_UserId",
@@ -316,6 +437,10 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUsers_AspNetRoles_RoleId",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_AspNetUsers_AspNetRoles_RoleId1",
                 table: "AspNetUsers");
 
             migrationBuilder.DropForeignKey(
@@ -346,6 +471,10 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 table: "AspNetUsers");
 
             migrationBuilder.DropIndex(
+                name: "IX_AspNetUsers_RoleId1",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers");
 
@@ -356,6 +485,16 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
             migrationBuilder.DropIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles");
+
+            migrationBuilder.DeleteData(
+                table: "AspNetRoles",
+                keyColumn: "Id",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "AspNetRoles",
+                keyColumn: "Id",
+                keyValue: 2);
 
             migrationBuilder.DropColumn(
                 name: "AccessFailedCount",
@@ -398,6 +537,10 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
+                name: "RoleId1",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
                 name: "SecurityStamp",
                 table: "AspNetUsers");
 
@@ -429,6 +572,113 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                 name: "IX_AspNetUsers_RoleId",
                 table: "Users",
                 newName: "IX_Users_RoleId");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Location",
+                table: "Events",
+                type: "nvarchar(200)",
+                maxLength: 200,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "EventName",
+                table: "Events",
+                type: "nvarchar(100)",
+                maxLength: 100,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "TicketQuantity",
+                table: "Bookings",
+                type: "int",
+                nullable: false,
+                defaultValue: 1,
+                oldClrType: typeof(int),
+                oldType: "int");
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "BookingDate",
+                table: "Bookings",
+                type: "datetime2",
+                nullable: false,
+                defaultValueSql: "GETDATE()",
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Password",
+                table: "Users",
+                type: "nvarchar(200)",
+                maxLength: 200,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "Users",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "Users",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Email",
+                table: "Users",
+                type: "nvarchar(100)",
+                maxLength: 100,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(256)",
+                oldMaxLength: 256,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Roles",
+                type: "nvarchar(50)",
+                maxLength: 50,
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(256)",
+                oldMaxLength: 256,
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Description",
+                table: "Roles",
+                type: "nvarchar(200)",
+                maxLength: 200,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Users",

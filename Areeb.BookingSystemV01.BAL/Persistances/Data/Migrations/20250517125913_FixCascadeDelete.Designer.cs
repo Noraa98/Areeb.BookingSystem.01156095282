@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250517123102_FixCascadeDelete")]
+    [Migration("20250517125913_FixCascadeDelete")]
     partial class FixCascadeDelete
     {
         /// <inheritdoc />
@@ -34,17 +34,13 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("BookingDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
                     b.Property<int>("TicketQuantity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -79,9 +75,7 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EventName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -90,9 +84,7 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -118,13 +110,11 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
@@ -138,6 +128,22 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Administrator role with full access",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Regular user role",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Areeb.BookingSystem.DAL.Entities.Users.User", b =>
@@ -159,22 +165,17 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -191,9 +192,7 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -205,6 +204,9 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoleId1")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
@@ -228,6 +230,8 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("RoleId1");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -357,10 +361,14 @@ namespace Areeb.BookingSystemV01.DAL.Persistances.Data.Migrations
             modelBuilder.Entity("Areeb.BookingSystem.DAL.Entities.Users.User", b =>
                 {
                     b.HasOne("Areeb.BookingSystem.DAL.Entities.Roles.Role", "Role")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Areeb.BookingSystem.DAL.Entities.Roles.Role", null)
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId1");
 
                     b.Navigation("Role");
                 });

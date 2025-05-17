@@ -23,14 +23,51 @@ namespace Areeb.BookingSystemV01.DAL.Persistences.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // منع Cascade Delete بين User و Role بسبب FK RoleId
+            // حل مشكلة الـ foreign key constraint cycle
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
-                .WithMany(r => r.Users)
+                .WithMany()
                 .HasForeignKey(u => u.RoleId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            // تعريف العلاقة بين المستخدم والحجوزات
+            modelBuilder.Entity<Booking>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Bookings)
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // تعريف العلاقة بين الحدث والحجوزات
+            modelBuilder.Entity<Booking>()
+                .HasOne(b => b.Event)
+                .WithMany(e => e.Bookings)
+                .HasForeignKey(b => b.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+           
+
+            // إنشاء الأدوار الافتراضية
+            SeedRoles(modelBuilder);
+        }
+
+        private void SeedRoles(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Role>().HasData(
+                new Role
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    NormalizedName = "ADMIN",
+                    Description = "Administrator role with full access"
+                },
+                new Role
+                {
+                    Id = 2,
+                    Name = "User",
+                    NormalizedName = "USER",
+                    Description = "Regular user role"
+                }
+            );
         }
 
 

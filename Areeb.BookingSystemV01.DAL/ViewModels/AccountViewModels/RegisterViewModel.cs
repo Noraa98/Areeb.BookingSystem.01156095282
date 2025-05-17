@@ -4,6 +4,10 @@ namespace Areeb.BookingSystemV01.PL.ViewModels.AccountViewModels
 {
     public class RegisterViewModel
     {
+
+        [Required]
+        public string? Username { get; set; }
+
         [Required(ErrorMessage = "First name is required.")]
         public string? FirstName { get; set; }
 
