@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Areeb.BookingSystemV01.DAL.Persistences.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -21,9 +21,18 @@ namespace Areeb.BookingSystemV01.DAL.Persistences.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
+
+            // منع Cascade Delete بين User و Role بسبب FK RoleId
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Role)
+                .WithMany(r => r.Users)
+                .HasForeignKey(u => u.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+
 
         public DbSet<Booking>? Bookings { get; set; }
         public DbSet<Event>? Events { get; set; }
