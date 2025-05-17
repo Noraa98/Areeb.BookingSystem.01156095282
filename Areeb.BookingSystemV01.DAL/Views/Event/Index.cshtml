@@ -1,0 +1,45 @@
+﻿@using Areeb.BookingSystemV01.BLL.Models.Events
+@model IEnumerable<EventReadDto>
+
+@{
+    ViewData["Title"] = "Events";
+}
+
+<h2 class="mb-4">Upcoming Events</h2>
+
+<div class="row">
+    @foreach (var eventItem in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@eventItem.ImageUrl" class="card-img-top" alt="@eventItem.EventName" style="height: 200px; object-fit: cover;" />
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@eventItem.EventName</h5>
+                    <p class="card-text">@eventItem.Description?.Substring(0, Math.Min(100, eventItem.Description.Length))...</p>
+                    <p><strong>Date:</strong> @eventItem.EventDate.ToShortDateString()</p>
+                    <p><strong>Price:</strong> $@eventItem.Price</p>
+                    <p><strong>Category:</strong> @eventItem.Category</p>
+
+                    <div class="mt-auto">
+                        @if (eventItem.IsBooked)
+                        {
+                            <span class="badge bg-success">Booked</span>
+                        }
+                        else
+                        {
+                            <form asp-controller="Booking" asp-action="Book" method="post">
+                                <input type="hidden" name="eventId" value="@eventItem.Id" />
+                                <button type="submit" class="btn btn-primary btn-sm">Book Now</button>
+                            </form>
+                        }
+
+                        <a asp-action="Details" asp-route-id="@eventItem.Id" class="btn btn-outline-secondary btn-sm mt-2">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+

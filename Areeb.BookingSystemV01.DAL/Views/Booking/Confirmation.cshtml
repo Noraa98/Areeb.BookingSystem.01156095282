@@ -1,0 +1,22 @@
+﻿@using Areeb.BookingSystemV01.BLL.Models.Events;
+@model EventReadDto
+
+@{
+    ViewData["Title"] = "Booking Confirmed";
+}
+
+<h2 class="text-success">Booking Confirmed!</h2>
+
+<p>You have successfully booked the event:</p>
+
+<div class="card mt-3 p-3">
+    <h4>@Model.EventName</h4>
+    <p>@Model.Description</p>
+    <p><strong>Date:</strong> @Model.EventDate.ToString("dd MMM yyyy")</p>
+    <p><strong>Venue:</strong> @Model.Venue</p>
+    <p><strong>Price:</strong> $@Model.Price</p>
+</div>
+
+<a asp-controller="Booking" asp-action="Index" class="btn btn-primary mt-4">Go to My Bookings</a>
+
+

@@ -1,0 +1,16 @@
+﻿@using Areeb.BookingSystemV01.BLL.Models.Events;
+@model Areeb.BookingSystemV01.BLL.Models.Events.EventUpdateDto
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h2>Edit Event</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <!-- نفس الحقول الموجودة في Create -->
+    <partial name="Create" />
+    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+</form>
+
+
